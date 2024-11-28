@@ -120,7 +120,9 @@ def fin_crew(pdf_p):
     data_collector_task = Task(
         description="Extract metadata and transaction data from the provided PDF.",
         agent=data_collector,
-        expected_output="""{
+        expected_output="""
+        Your output should be in the below format:
+        {
             "metadata": {"name": "John Doe", "address": "123 Example Street", "account_number": "9876543210"},
             "Transaction Data":
             1. Date: 09 Sep 2024, Description: TRANSFER TO 4897691162095 - UPI/DR/461955486080/LALTESH /YESB/q225242534/NA, Amount: 40.00, Balance: 8206.13
@@ -138,7 +140,8 @@ def fin_crew(pdf_p):
         Ensure consistency, handle missing data, and prepare normalized features. Do not remove any data.""",
         agent=data_engineer,
         expected_output='''
-        "User Dataset":
+        Your output should be in the below format:
+        User Dataset:
 
         | Name       | Address                                                                                           | Account_Number |
         |------------|---------------------------------------------------------------------------------------------------|----------------|
@@ -183,7 +186,7 @@ def fin_crew(pdf_p):
 
     risk_score_aggregator_task = Task(
         description="""Combine financial analysis, fraud detection, and model outputs into 
-        a unified credit risk score. Classify applicants into risk tiers (low, medium, high).""",
+        a unified credit risk score. Classify the applicant into risk tiers (low, medium, high).""",
         agent=risk_score_aggregator,
         expected_output="Unified credit risk score and risk classification."
     )
@@ -200,14 +203,15 @@ def fin_crew(pdf_p):
         decisions. Ensure decisions align with policy and business goals.""",
         agent=decision_maker,
         expected_output="""
-            "Name" : "abc kumar",
-            "address" : "xyz",
-            "account number" : 12345,
-            "Result" : "Accepted or Rejected",
-            "Reason" : "due to unfavorable financial ratios – a high Debt-to-Income ratio and a low Quick ratio – suggesting potential 
-                difficulty in managing additional debt or impending short-term liabilities..."
+            Your output should be in the below format:
+            Name : abc kumar
+            Address : xyz
+            Account number : 12345
+            Result : Accepted or Rejected,
+            Reason : Due to unfavorable financial ratios – a high Debt-to-Income ratio and a low Quick ratio – suggesting potential 
+                difficulty in managing additional debt or impending short-term liabilities...
         """,
-        output_file='credit_report.md'
+        #output_file='credit_report.md'
     )
 
     # Initialize a Crew for the Credit Risk Assessment Workflow
