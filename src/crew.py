@@ -77,4 +77,4 @@ def fin_crew(pdf_p):
 
     return agent_output
 
-#fin_crew("C:\\Users\\Microsoft\\Desktop\\AI-Agent\\uploaded_files\\Financial-Examples-for-I20.pdf")
+#fin_crew("C:\\Users\\Admin\\Desktop\\AI-Agent\\uploaded_files\\Financial-Examples-for-I20.pdf")

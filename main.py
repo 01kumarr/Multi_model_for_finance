@@ -30,7 +30,7 @@ UPLOAD_DIRECTORY = "uploaded_files"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 # API 1: Accept JSON and PDF file
-@app.post("/upload/")
+@app.post("/upload")
 async def upload_files(pdf_file: UploadFile):
 
     pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
