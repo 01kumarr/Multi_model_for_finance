@@ -31,20 +31,8 @@ os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 # API 1: Accept JSON and PDF file
 @app.post("/upload/")
-async def main(pdf_file: UploadFile):
-    # Save JSON file
-    # json_path = os.path.join(UPLOAD_DIRECTORY, json_file.filename)
-    # with open(json_path, "wb") as f:
-    #     f.write(await json_file.read())
-
-    # Validate JSON content
-    # with open(json_path, "r") as f:
-    #     try:
-    #         data = json.load(f)
-    #     except json.JSONDecodeError:
-    #         return {"error": "Invalid JSON file"}
-
-    # Save PDF file
+async def upload_files(pdf_file: UploadFile):
+    
     pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
     with open(pdf_path, "wb") as f:
         f.write(await pdf_file.read())
