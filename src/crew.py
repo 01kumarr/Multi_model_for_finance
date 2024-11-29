@@ -1,6 +1,6 @@
 from crewai import Crew, Process
-from agents import *
-from tasks import *
+from .agents import *
+from .tasks import *
 import os
 from dotenv import load_dotenv
 
@@ -10,7 +10,8 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 
 def fin_crew(pdf_p):
-
+    # call this function to take incoming pdfs...
+    pdf_upload(pdf_p)
 
 
     # Initialize a Crew for the Credit Risk Assessment Workflow
