@@ -10,7 +10,8 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 
 def fin_crew(pdf_p):
-
+    # call this function to take incoming pdfs...
+    pdf_upload(pdf_p)
 
 
     # Initialize a Crew for the Credit Risk Assessment Workflow
