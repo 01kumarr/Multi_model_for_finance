@@ -1,39 +1,11 @@
 from crewai import Agent, LLM
-from crewai_tools import PDFSearchTool
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
-  
-def pdf_load(pdf_file):
-    
-    return pdf_file
 
 llm = LLM(model="gemini/gemini-1.5-pro-002", api_key= api_key, temperature=0.3)
-
-def pdf_upload(pdf_files):
-
-    pdf_search_tool = PDFSearchTool(pdf=pdf_files,
-        config=dict(
-            llm=dict(
-                provider="google", 
-                config=dict(
-                    model="gemini/gemini-1.5-pro-002"
-                ),
-            ),
-            embedder=dict(
-                provider="google",
-                config=dict(
-                    model="models/embedding-001",
-                    task_type="retrieval_document"
-                ),
-            ),
-        )
-    )
-
-    return pdf_search_tool
-
 
 
 data_collector = Agent(
@@ -49,7 +21,7 @@ backstory="""
 """,
 verbose=True,
 allow_delegation=False,
-tools=[pdf_upload()],
+tools=[],
 llm = llm
 )
 
@@ -80,7 +52,7 @@ financial_analyst = Agent(
     backstory="""A seasoned finance professional, you specialize in identifying key financial 
     risks and opportunities, using quantitative and qualitative methods.""",
     verbose=True,
-    allow_delegation=True,
+    allow_delegation=False,
     llm = llm
 )
 
@@ -132,6 +104,6 @@ decision_maker = Agent(
     backstory="""With deep expertise in lending and credit policy, your strategic thinking 
     balances risk with business opportunity.""",
     verbose=True,
-    allow_delegation=True,
+    allow_delegation=False,
     llm = llm
 )

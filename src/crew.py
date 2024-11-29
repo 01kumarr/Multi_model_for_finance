@@ -1,6 +1,7 @@
 from crewai import Crew, Process
-from .agents import *
-from .tasks import *
+from crewai_tools import PDFSearchTool
+from src.agents import *
+from src.tasks import *
 import os
 from dotenv import load_dotenv
 
@@ -10,9 +11,24 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 
 def fin_crew(pdf_p):
-    # call this function to take incoming pdfs...
-    pdf_upload(pdf_p)
-
+    pdf_search_tool = PDFSearchTool(pdf=pdf_p,
+        config=dict(
+            llm=dict(
+                provider="google", 
+                config=dict(
+                    model="gemini/gemini-1.5-pro-002"
+                ),
+            ),
+            embedder=dict(
+                provider="google",
+                config=dict(
+                    model="models/embedding-001",
+                    task_type="retrieval_document"
+                ),
+            ),
+        )
+    )
+    data_collector.tools.append(pdf_search_tool)
 
     # Initialize a Crew for the Credit Risk Assessment Workflow
     credit_risk_crew = Crew(
@@ -61,4 +77,4 @@ def fin_crew(pdf_p):
 
     return agent_output
 
-fin_crew("C:\\Users\\Microsoft\\Desktop\\AI-Agent\\uploaded_files\\Financial-Examples-for-I20.pdf")
+#fin_crew("C:\\Users\\Microsoft\\Desktop\\AI-Agent\\uploaded_files\\Financial-Examples-for-I20.pdf")

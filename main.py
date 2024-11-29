@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from src.crew import fin_crew
+from src.crew import *
 
 
 # FastAPI app initialization

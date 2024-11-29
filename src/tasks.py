@@ -1,4 +1,4 @@
-from .agents import *
+from src.agents import *
 from crewai import Task
 
 # Define tasks for each agent with expected outputs
