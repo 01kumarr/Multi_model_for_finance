@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -30,7 +31,7 @@ os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 # API 1: Accept JSON and PDF file
 @app.post("/upload/")
-async def upload_files(pdf_file: UploadFile):
+async def main(pdf_file: UploadFile):
     # Save JSON file
     # json_path = os.path.join(UPLOAD_DIRECTORY, json_file.filename)
     # with open(json_path, "wb") as f:
@@ -62,3 +63,7 @@ async def upload_files(pdf_file: UploadFile):
 #         return {"output": content}
 #     else:
 #         return {"error": "No output file found. Ensure the workflow has been executed."}
+
+
+if __name__ == "__main__":
+   uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

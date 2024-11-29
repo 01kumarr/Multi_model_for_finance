@@ -1,19 +1,21 @@
-from crewai import Agent, Task, Crew, Process
+from crewai import Agent, Task, Crew, Process, LLM
 from crewai_tools import PDFSearchTool
 from langchain_openai import ChatOpenAI
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-os.getenv("OPENAI_API_KEY")
-os.getenv("MODEL")
+os.getenv("GOOGLE_API_KEY")
+# os.getenv("MODEL")    
 
 
 def fin_crew(pdf_p):
-    llm = ChatOpenAI(
-    model='gpt-4',
-    temperature=0.3
-    )
+    # llm = ChatOpenAI(
+    # model='gpt-4',
+    # temperature=0.3
+    # )
+
+    llm = LLM(model="gemini/gemini-1.5-pro-002", api_key='AIzaSyA_VNgq_NwbhZ3HNQxPiDN_7jSljDVv9kU')
 
     # File storage paths (ensure these directories exist)
     #JSON_STORAGE_PATH = json_p
@@ -22,7 +24,30 @@ def fin_crew(pdf_p):
 
     # Define tools with placeholder paths (updated dynamically during runtime)
     #json_tool = JSONSearchTool(json_path=JSON_STORAGE_PATH)
-    pdf_search_tool = PDFSearchTool(pdf=PDF_STORAGE_PATH)
+    #pdf_search_tool = PDFSearchTool(pdf=PDF_STORAGE_PATH)
+
+    pdf_search_tool = PDFSearchTool(pdf=PDF_STORAGE_PATH,
+    config=dict(
+        llm=dict(
+            provider="google", # or google, openai, anthropic, llama2, ...
+            config=dict(
+                model="gemini/gemini-1.5-pro-002",
+                # temperature=0.5,
+                # top_p=1,
+                # stream=true,
+            ),
+        ),
+        embedder=dict(
+            provider="google", # or openai, ollama, ...
+            config=dict(
+                model="models/embedding-001",
+                task_type="retrieval_document",
+                # title="Embeddings",
+            ),
+        ),
+    )
+)
+
 
     # Define agents with roles and goals
     data_collector = Agent(
@@ -58,6 +83,7 @@ def fin_crew(pdf_p):
         """,
         verbose=True,
         allow_delegation=False,
+        llm = llm
     )
 
     financial_analyst = Agent(
@@ -66,7 +92,8 @@ def fin_crew(pdf_p):
         backstory="""A seasoned finance professional, you specialize in identifying key financial 
         risks and opportunities, using quantitative and qualitative methods.""",
         verbose=True,
-        allow_delegation=True
+        allow_delegation=True,
+        llm = llm
     )
 
 
@@ -76,7 +103,8 @@ def fin_crew(pdf_p):
         backstory="""A fraud detection veteran, your sharp instincts and analytical tools 
         ensure fraudulent activities are flagged before they cause damage.""",
         verbose=True,
-        allow_delegation=False
+        allow_delegation=False,
+        llm = llm
     )
 
     compliance_officer = Agent(
@@ -85,7 +113,8 @@ def fin_crew(pdf_p):
         backstory="""A legal and compliance expert, you ensure the system operates within 
         the regulatory framework, safeguarding both borrowers and lenders.""",
         verbose=True,
-        allow_delegation=False
+        allow_delegation=False,
+        llm = llm
     )
 
 
@@ -95,7 +124,8 @@ def fin_crew(pdf_p):
         backstory="""Your expertise in combining diverse data sources ensures the system 
         produces a consistent and reliable credit risk score.""",
         verbose=True,
-        allow_delegation=False
+        allow_delegation=False,
+        llm = llm
     )
 
     report_generator = Agent(
@@ -104,7 +134,8 @@ def fin_crew(pdf_p):
         backstory="""A skilled communicator, you transform raw outputs into clear and actionable 
         reports for internal and external stakeholders.""",
         verbose=True,
-        allow_delegation=False
+        allow_delegation=False,
+        llm = llm
     )
 
     decision_maker = Agent(
@@ -113,7 +144,8 @@ def fin_crew(pdf_p):
         backstory="""With deep expertise in lending and credit policy, your strategic thinking 
         balances risk with business opportunity.""",
         verbose=True,
-        allow_delegation=True
+        allow_delegation=True,
+        llm = llm
     )
 
     # Define tasks for each agent with expected outputs
@@ -222,7 +254,6 @@ def fin_crew(pdf_p):
             financial_analyst,
             fraud_detector,
             compliance_officer,
-            
             risk_score_aggregator,
             report_generator,
             decision_maker
@@ -238,6 +269,14 @@ def fin_crew(pdf_p):
             decision_maker_task
         ],
         process=Process.sequential,
+        memory=True,
+        embedder={
+        "provider": "google",
+        "config": {
+            "api_key": "AIzaSyA_VNgq_NwbhZ3HNQxPiDN_7jSljDVv9kU",
+            "model": 'models/embedding-001'
+            }
+        },
         verbose=True
     )
 
@@ -253,3 +292,5 @@ def fin_crew(pdf_p):
 
 
     return agent_output
+
+fin_crew("C:/Users/Admin/Desktop/AI-Agent/uploaded_files/Financial-Examples-for-I20.pdf")
