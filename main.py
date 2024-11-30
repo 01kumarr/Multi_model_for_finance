@@ -41,7 +41,6 @@ async def upload_files(pdf_file: UploadFile):
     return fin_crew(pdf_path)
 
 
-
 # @app.get("/get-output/")
 # async def get_output():
 #     # Check if the output file exists
