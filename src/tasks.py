@@ -6,7 +6,7 @@ data_collector_task = Task(
     description="Extract metadata and transaction data from the provided PDF.",
     agent=data_collector,
     expected_output="""
-    Your output should be in the below format:
+    Your output should be in the below format do not markdown it as JSON:
     {
         "metadata": {"name": "John Doe", "address": "123 Example Street", "account_number": "9876543210"},
         "Transaction Data":

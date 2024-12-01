@@ -53,14 +53,14 @@ def fin_crew(pdf_p):
             decision_maker_task
         ],
         process=Process.sequential,
-        memory=True,
-        embedder={
-        "provider": "google",
-        "config": {
-            "api_key": api_key,
-            "model": 'models/embedding-001'
-            }
-        },
+        memory=False,
+        # embedder={
+        # "provider": "google",
+        # "config": {
+        #     "api_key": api_key,
+        #     "model": 'models/embedding-001'
+        #     }
+        # },
         verbose=True
     )
 

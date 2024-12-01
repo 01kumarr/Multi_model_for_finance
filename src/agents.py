@@ -1,12 +1,11 @@
-from crewai import Agent, LLM
+from crewai import Agent
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv("GOOGLE_API_KEY")
 
-llm = LLM(model="gemini/gemini-1.5-pro-002", api_key= api_key, temperature=0.3)
-
+os.getenv("OPENAI_API_KEY")
+os.getenv("MODEL")
 
 data_collector = Agent(
 role="Financial Data Extraction Specialist",
@@ -22,7 +21,7 @@ backstory="""
 verbose=True,
 allow_delegation=False,
 tools=[],
-llm = llm
+#llm = llm
 )
 
 # Define agents with roles and goals
@@ -42,8 +41,8 @@ data_engineer = Agent(
         - Transforming data into the appropriate format for use in machine learning models.
     """,
     verbose=True,
-    allow_delegation=False,
-    llm = llm
+    allow_delegation=False
+    #llm = llm
 )
 
 financial_analyst = Agent(
@@ -52,8 +51,8 @@ financial_analyst = Agent(
     backstory="""A seasoned finance professional, you specialize in identifying key financial 
     risks and opportunities, using quantitative and qualitative methods.""",
     verbose=True,
-    allow_delegation=False,
-    llm = llm
+    allow_delegation=False
+    #llm = llm
 )
 
 
@@ -63,8 +62,8 @@ fraud_detector = Agent(
     backstory="""A fraud detection veteran, your sharp instincts and analytical tools 
     ensure fraudulent activities are flagged before they cause damage.""",
     verbose=True,
-    allow_delegation=False,
-    llm = llm
+    allow_delegation=False
+    #llm = llm
 )
 
 compliance_officer = Agent(
@@ -73,8 +72,8 @@ compliance_officer = Agent(
     backstory="""A legal and compliance expert, you ensure the system operates within 
     the regulatory framework, safeguarding both borrowers and lenders.""",
     verbose=True,
-    allow_delegation=False,
-    llm = llm
+    allow_delegation=False
+    #llm = llm
 )
 
 
@@ -84,8 +83,8 @@ risk_score_aggregator = Agent(
     backstory="""Your expertise in combining diverse data sources ensures the system 
     produces a consistent and reliable credit risk score.""",
     verbose=True,
-    allow_delegation=False,
-    llm = llm
+    allow_delegation=False
+    #llm = llm
 )
 
 report_generator = Agent(
@@ -94,8 +93,8 @@ report_generator = Agent(
     backstory="""A skilled communicator, you transform raw outputs into clear and actionable 
     reports for internal and external stakeholders.""",
     verbose=True,
-    allow_delegation=False,
-    llm = llm
+    allow_delegation=False
+    #llm = llm
 )
 
 decision_maker = Agent(
@@ -104,6 +103,6 @@ decision_maker = Agent(
     backstory="""With deep expertise in lending and credit policy, your strategic thinking 
     balances risk with business opportunity.""",
     verbose=True,
-    allow_delegation=False,
-    llm = llm
+    allow_delegation=False
+    #llm = llm
 )
