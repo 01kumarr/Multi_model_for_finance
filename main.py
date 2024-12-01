@@ -35,6 +35,16 @@ async def upload_files(pdf_file: UploadFile):
     # Pass file locations to the function
     return fin_crew(pdf_path)
 
+@app.post("/upload_org")
+async def upload_files_org(pdf_file: UploadFile):
+
+    pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
+    with open(pdf_path, "wb") as f:
+        f.write(await pdf_file.read())
+    
+    # Pass file locations to the function
+    return fin_org_crew(pdf_path)
+
 
 # @app.get("/get-output/")
 # async def get_output():

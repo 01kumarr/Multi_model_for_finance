@@ -1,15 +1,12 @@
-from crewai import Crew, Process
-from crewai_tools import PDFSearchTool
+from crewai import Crew
 from src.agents import *
 from src.tasks import *
 from PyPDF2 import PdfReader
-import pdfplumber
-import pandas as pd
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-os.getenv("GOOGLE_API_KEY")
+os.getenv("OPENAI_API_KEY")
 os.getenv("MODEL")
 
 def extract_text_from_pdf(pdf_path):
@@ -19,34 +16,6 @@ def extract_text_from_pdf(pdf_path):
         text += page.extract_text()
 
     return text
-
-
-
-def extract_tables_from_pdf(pdf_path):
-    # Open the PDF file
-    with pdfplumber.open(pdf_path) as pdf:
-        # Initialize an empty list to store all tables
-        all_tables = []
-        
-        # Iterate through each page
-        for page in pdf.pages:
-            # Extract tables from the current page
-            tables = page.extract_tables()
-            
-            # Add tables to our list if any were found
-            if tables:
-                all_tables.extend(tables)
-    
-    # Convert tables to pandas DataFrames and store them
-    dfs = []
-    for i, table in enumerate(all_tables):
-        df = pd.DataFrame(table[1:], columns=table[0])  # Assuming first row contains headers
-        dfs.append(df)
-        
-        # Optionally save each table to CSV
-        df.to_csv(f'table_{i+1}.csv', index=False)
-
-
 
 
 
@@ -92,4 +61,39 @@ def fin_crew(pdf_p):
 
     return agent_output
 
-#fin_crew("C:\\Users\\Admin\\Desktop\\AI-Agent\\uploaded_files\\Financial-Examples-for-I20.pdf")
+
+def fin_org_crew(pdf_p1):
+    # Define a crew with agents and tasks
+    strategic_balance_analyzer_crew = Crew(
+        agents=[
+            balance_sheet_data_extractor,
+            data_analyst,
+            business_consultant
+        ],
+        tasks=[
+            balance_sheet_data_extractor_task,
+            data_analyst_task,
+            business_consultant_task
+        ]
+    )
+
+    pdf_d1 = extract_text_from_pdf(pdf_p1)
+
+    inputs1 = {
+        'pdf_data1': pdf_d1
+    }
+
+
+    # Kick off the workflow
+    agent_result1= strategic_balance_analyzer_crew.kickoff(inputs=inputs1)
+
+    agent_output1 = {}
+    agent_output1["final_answer"] = agent_result1.raw
+    agent_output1["agents"] = []
+    for tas in agent_result1.tasks_output:
+        agent_output1["agents"].append({"agentName" : tas.agent, "agentResponse" : tas.raw})
+
+
+    return agent_output1
+
+

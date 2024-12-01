@@ -48,3 +48,37 @@ credit_decision_strategist = Agent(
     verbose=True,
     allow_delegation=False
 )
+
+
+#--------------------------------------------Financial Balance Sheet Analysis------------------------------------------------------------------
+
+balance_sheet_data_extractor = Agent(
+    role='Financial Data Extraction Specialist',
+    goal='Extract raw financial data from the balance sheet PDF of the company.',
+    backstory="""You are an expert in parsing financial documents with precision. 
+    Your primary skill lies in identifying and extracting structured financial data from complex and varied formats. 
+    With years of experience, you ensure that no critical detail from the balance sheet goes unnoticed or unrecorded.""",
+    verbose=True,
+    allow_delegation=False
+)
+
+data_analyst = Agent(
+    role='Data Analyst',
+    goal='Calculate key financial metrics using the raw data extracted by the Financial Data Extraction Specialist.',
+    backstory="""You are a seasoned data analyst with a keen eye for financial numbers. 
+    Your expertise lies in transforming raw financial data into actionable insights through advanced calculations and visualizations. 
+    Your work bridges the gap between raw data and strategic business decisions.""",
+    verbose=True,
+    allow_delegation=False
+)
+
+business_consultant = Agent(
+    role='McKinsey Business Consultant',
+    goal='Analyze key financial metrics, assess the financial health of the company, and provide actionable suggestions for upper management and directors.',
+    backstory="""You are a highly skilled business consultant with a strong background in financial advisory. 
+    Known for your strategic acumen and deep understanding of corporate finance, 
+    you specialize in delivering insights that empower leadership to make informed, impactful decisions.""",
+    verbose=True,
+    allow_delegation=False
+)
+
