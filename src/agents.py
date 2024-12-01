@@ -7,102 +7,44 @@ load_dotenv()
 os.getenv("OPENAI_API_KEY")
 os.getenv("MODEL")
 
-data_collector = Agent(
-role="Financial Data Extraction Specialist",
-goal="Extract only metadata (user name, address, account number) and transaction data (date, description, amount, balance) from the provided bank statement PDFs.",
-backstory="""
-    You are a financial data extraction specialist, and your sole task is to extract the following specific information:
-    1. User metadata: Name, address, and account number. This pdf contains the bank statement of single user whose name and account number appears on top of pdf.
-    2. Transaction data: Date, description, amount, and balance from the bank statement PDF.
-    
-    You must avoid extracting any other information or generating additional data. Focus solely on the user metadata and transaction details.
-    Ensure the output is clean, accurate, and strictly limited to these two categories.
-""",
-verbose=True,
-allow_delegation=False,
-tools=[],
-#llm = llm
-)
 
-# Define agents with roles and goals
-
-data_engineer = Agent(
-    role="Data Engineer",
-    goal="Clean, preprocess, and optimize data pipelines for model input, ensuring data integrity and high-quality preprocessing.",
-    backstory="""
-        You are a data engineering expert, responsible for transforming raw data extracted from various sources, including financial documents, 
-        into high-quality, structured data for downstream predictive modeling or analysis. You will clean, preprocess, handle missing data, 
-        remove outliers, normalize, and prepare datasets to ensure seamless integration into machine learning pipelines.
-        
-        Your responsibilities include:
-        - Ensuring data consistency and integrity.
-        - Preprocessing tasks like encoding categorical variables, handling missing values, and removing duplicates.
-        - Optimizing data pipelines for faster data access and analysis.
-        - Transforming data into the appropriate format for use in machine learning models.
-    """,
+# Define your agents with roles and goals
+financial_data_extractor = Agent(
+    role='Financial Data Extraction Specialist',
+    goal='Extract relevant financial data from the following bank statement data:{pdf_data} of the loan applicant.',
+    backstory="""You are a meticulous data specialist with years of experience in document analysis and data extraction. 
+    Armed with advanced tools and a sharp eye for detail, you specialize in transforming unstructured data into actionable insights. 
+    Your expertise ensures that no critical financial detail goes unnoticed.""",
     verbose=True,
     allow_delegation=False
-    #llm = llm
 )
-
-financial_analyst = Agent(
-    role='Financial Analyst',
-    goal='Analyze financial statements and ratios to determine creditworthiness of the applicant.',
-    backstory="""A seasoned finance professional, you specialize in identifying key financial 
-    risks and opportunities, using quantitative and qualitative methods.""",
-    verbose=True,
-    allow_delegation=False
-    #llm = llm
-)
-
-
-fraud_detector = Agent(
-    role='Fraud Detection Specialist',
-    goal='Identify anomalies and potential fraudulent activity in credit application.',
-    backstory="""A fraud detection veteran, your sharp instincts and analytical tools 
-    ensure fraudulent activities are flagged before they cause damage.""",
-    verbose=True,
-    allow_delegation=False
-    #llm = llm
-)
-
-compliance_officer = Agent(
-    role='Compliance Officer',
-    goal='Ensure all processes adhere to RBI guidelines and data protection laws.',
-    backstory="""A legal and compliance expert, you ensure the system operates within 
-    the regulatory framework, safeguarding both borrowers and lenders.""",
-    verbose=True,
-    allow_delegation=False
-    #llm = llm
-)
-
 
 risk_score_aggregator = Agent(
     role='Risk Score Aggregator',
-    goal='Aggregate outputs into a unified credit risk score and classification.',
-    backstory="""Your expertise in combining diverse data sources ensures the system 
-    produces a consistent and reliable credit risk score.""",
+    goal='Calculate key financial ratios used to assess the creditworthiness of the loan applicant.',
+    backstory="""As a quantitative analyst, you have spent your career building models that measure financial risk. 
+    Your ability to distill complex datasets into clear, actionable metrics makes you indispensable in any risk assessment team. 
+    You thrive on numbers, ensuring each calculation is precise and reliable.""",
     verbose=True,
     allow_delegation=False
-    #llm = llm
 )
 
-report_generator = Agent(
-    role='Report Generator',
-    goal='Create a comprehensive report consolidating all outputs for audit and decision-making.',
-    backstory="""A skilled communicator, you transform raw outputs into clear and actionable 
-    reports for internal and external stakeholders.""",
+policy_compliance_officer = Agent(
+    role='Policy Compliance Officer',
+    goal='Assess the financial behavior of the applicant and verify compliance with the bank’s policy.',
+    backstory="""You are a compliance expert with a deep understanding of financial regulations and corporate policies. 
+    Your analytical skills allow you to spot irregularities and ensure that applicants meet the institution's standards. 
+    A strict adherent to protocol, you excel in identifying risk factors linked to non-compliance.""",
     verbose=True,
     allow_delegation=False
-    #llm = llm
 )
 
-decision_maker = Agent(
+credit_decision_strategist = Agent(
     role='Credit Decision Strategist',
-    goal='Make final credit approval decisions based on compiled reports.',
-    backstory="""With deep expertise in lending and credit policy, your strategic thinking 
-    balances risk with business opportunity.""",
+    goal='Evaluate data from the Risk Score Aggregator and Policy Compliance Officer to decide whether to approve the loan.',
+    backstory="""With a career steeped in financial strategy, you bring a holistic perspective to credit decision-making. 
+    Known for your sound judgment and ability to balance risk with opportunity, you integrate diverse data points to make well-informed decisions. 
+    You are the final arbiter in determining the bank's trust in an applicant's creditworthiness.""",
     verbose=True,
     allow_delegation=False
-    #llm = llm
 )

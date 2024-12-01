@@ -2,71 +2,86 @@ from crewai import Crew, Process
 from crewai_tools import PDFSearchTool
 from src.agents import *
 from src.tasks import *
+from PyPDF2 import PdfReader
+import pdfplumber
+import pandas as pd
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv("GOOGLE_API_KEY")
-# os.getenv("MODEL")    
+os.getenv("GOOGLE_API_KEY")
+os.getenv("MODEL")
+
+def extract_text_from_pdf(pdf_path):
+    reader = PdfReader(pdf_path)
+    text = ""
+    for page in reader.pages:
+        text += page.extract_text()
+
+    return text
+
+
+
+def extract_tables_from_pdf(pdf_path):
+    # Open the PDF file
+    with pdfplumber.open(pdf_path) as pdf:
+        # Initialize an empty list to store all tables
+        all_tables = []
+        
+        # Iterate through each page
+        for page in pdf.pages:
+            # Extract tables from the current page
+            tables = page.extract_tables()
+            
+            # Add tables to our list if any were found
+            if tables:
+                all_tables.extend(tables)
+    
+    # Convert tables to pandas DataFrames and store them
+    dfs = []
+    for i, table in enumerate(all_tables):
+        df = pd.DataFrame(table[1:], columns=table[0])  # Assuming first row contains headers
+        dfs.append(df)
+        
+        # Optionally save each table to CSV
+        df.to_csv(f'table_{i+1}.csv', index=False)
+
+
+
 
 
 def fin_crew(pdf_p):
-    pdf_search_tool = PDFSearchTool(pdf=pdf_p,
-        config=dict(
-            llm=dict(
-                provider="google", 
-                config=dict(
-                    model="gemini/gemini-1.5-pro-002"
-                ),
-            ),
-            embedder=dict(
-                provider="google",
-                config=dict(
-                    model="models/embedding-001",
-                    task_type="retrieval_document"
-                ),
-            ),
-        )
-    )
-    data_collector.tools.append(pdf_search_tool)
+    
+    #data_collector.tools.append(pdf_search_tool)
 
     # Initialize a Crew for the Credit Risk Assessment Workflow
-    credit_risk_crew = Crew(
-        agents=[
-            data_collector,
-            data_engineer,
-            financial_analyst,
-            fraud_detector,
-            compliance_officer,
-            risk_score_aggregator,
-            report_generator,
-            decision_maker
-        ],
-        tasks=[
-            data_collector_task,
-            data_engineer_task,
-            financial_analyst_task,
-            fraud_detector_task,
-            compliance_officer_task,
-            risk_score_aggregator_task,
-            report_generator_task,
-            decision_maker_task
-        ],
-        process=Process.sequential,
-        memory=False,
-        # embedder={
-        # "provider": "google",
-        # "config": {
-        #     "api_key": api_key,
-        #     "model": 'models/embedding-001'
-        #     }
-        # },
-        verbose=True
+    # Define a crew with agents and tasks
+    credit_risk_assessment_crew = Crew(
+    agents=[
+        financial_data_extractor,
+        risk_score_aggregator,
+        policy_compliance_officer,
+        credit_decision_strategist
+    ],
+    tasks=[
+        financial_data_extractor_task,
+        risk_score_aggregator_task,
+        policy_compliance_officer_task,
+        credit_decision_strategist_task
+    ]
     )
+
+
+    # Extract tables
+    pdf_d = extract_text_from_pdf(pdf_p)
+
+    inputs = {
+        'pdf_data': pdf_d
+    }
 
 
     # Kick off the workflow
-    agent_result= credit_risk_crew.kickoff()
+    agent_result= credit_risk_assessment_crew.kickoff(inputs=inputs)
 
     agent_output = {}
     agent_output["final_answer"] = agent_result.raw
