@@ -71,6 +71,7 @@ credit_decision_strategist_task = Task(
     - Decision: [Approved/Denied]
     - Supporting points: [Bullet point of factors considered from financial ratios and behavior analysis]
     - Justification: [Detailed reasoning in bullet points for the decision]
+    Also provide answer for this {query}
     """,
     agent=credit_decision_strategist,
     context=[risk_score_aggregator_task]
@@ -155,6 +156,7 @@ business_consultant_task = Task(
     - Financial health assessment: [Overview of strengths, weaknesses, and concerns]
     - Recommendations: [Actionable steps for improvement]
     - Strategic advice: [Long-term strategies for financial stability and growth]
+    Also provide answer for this {query}
     """,
     agent=business_consultant
 )

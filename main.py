@@ -1,8 +1,9 @@
 import uvicorn
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from src.crew import *
+from src.vinit import *
 
 
 # FastAPI app initialization
@@ -26,24 +27,37 @@ os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
 # API 1: Accept JSON and PDF file
 @app.post("/upload")
-async def upload_files(pdf_file: UploadFile):
+async def upload_files(
+    pdf_file: UploadFile = None, 
+    text: str = Form(None)
+    ):
 
-    pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
-    with open(pdf_path, "wb") as f:
-        f.write(await pdf_file.read())
-    
-    # Pass file locations to the function
-    return fin_crew(pdf_path)
+    if pdf_file is not None:
+        pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
+        with open(pdf_path, "wb") as f:
+            f.write(await pdf_file.read())
+        
+        # Pass file locations to the function
+        return fin_crew(pdf_path, text)
+    else:
+
+        return default_chat_vinit(text)
+
 
 @app.post("/upload_org")
-async def upload_files_org(pdf_file: UploadFile):
-
-    pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
-    with open(pdf_path, "wb") as f:
-        f.write(await pdf_file.read())
-    
-    # Pass file locations to the function
-    return fin_org_crew(pdf_path)
+async def upload_files_org(
+    pdf_file: UploadFile = None,
+    text: str = Form(None)
+    ):
+    if pdf_file is not None and text:
+        pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
+        with open(pdf_path, "wb") as f:
+            f.write(await pdf_file.read())
+        
+        # Pass file locations to the function
+        return fin_org_crew(pdf_path, text)
+    else:
+        return default_chat_vinit(text)
 
 
 # @app.get("/get-output/")

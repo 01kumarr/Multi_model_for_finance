@@ -19,7 +19,7 @@ def extract_text_from_pdf(pdf_path):
 
 
 
-def fin_crew(pdf_p):
+def fin_crew(pdf_p, query):
     
     #data_collector.tools.append(pdf_search_tool)
 
@@ -45,7 +45,8 @@ def fin_crew(pdf_p):
     pdf_d = extract_text_from_pdf(pdf_p)
 
     inputs = {
-        'pdf_data': pdf_d
+        'pdf_data': pdf_d,
+        'query': query
     }
 
 
@@ -62,7 +63,7 @@ def fin_crew(pdf_p):
     return agent_output
 
 
-def fin_org_crew(pdf_p1):
+def fin_org_crew(pdf_p1, query):
     # Define a crew with agents and tasks
     strategic_balance_analyzer_crew = Crew(
         agents=[
@@ -80,7 +81,8 @@ def fin_org_crew(pdf_p1):
     pdf_d1 = extract_text_from_pdf(pdf_p1)
 
     inputs1 = {
-        'pdf_data1': pdf_d1
+        'pdf_data1': pdf_d1,
+        'query': query
     }
 
 
