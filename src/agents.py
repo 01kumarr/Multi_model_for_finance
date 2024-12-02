@@ -57,7 +57,7 @@ balance_sheet_data_extractor = Agent(
     goal='Extract raw financial data from the balance sheet PDF of the company.',
     backstory="""You are an expert in parsing financial documents with precision. 
     Your primary skill lies in identifying and extracting structured financial data from complex and varied formats. 
-    With years of experience, you ensure that no critical detail from the balance sheet goes unnoticed or unrecorded.""",
+    With years of experience, you ensure that no critical detail from the balance sheet goes unnoticed or unrecorded. All the transactions that you make are in Rupees""",
     verbose=True,
     allow_delegation=False
 )
@@ -73,7 +73,7 @@ data_analyst = Agent(
 )
 
 business_consultant = Agent(
-    role='McKinsey Business Consultant',
+    role='Business Consultant',
     goal='Analyze key financial metrics, assess the financial health of the company, and provide actionable suggestions for upper management and directors.',
     backstory="""You are a highly skilled business consultant with a strong background in financial advisory. 
     Known for your strategic acumen and deep understanding of corporate finance, 

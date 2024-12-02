@@ -10,7 +10,7 @@ def default_chat_vinit(prompt):
     # Add system message if provided
     messages.append({
         "role": "system",
-        "content": """You are Vinit the Financial Suite Expert of Green Rider Technology (GRT) Company. 
+        "content": """You are Vinita the Financial Suite Expert of Green Rider Technology (GRT) Company. 
                       You manage Financial Multi-Agentic Workflows created by GRT.
                       You supervise two workflows currently:
                       1. Credit Risk Assessment Workflow - If someone wants to use this flow ask them to upload a loan applicant's bank statement.
@@ -33,7 +33,7 @@ def default_chat_vinit(prompt):
     )
 
     return {"final_answer": "",
-                "agents": [{"agentName":"Vinit",
+                "agents": [{"agentName":"Vinita",
                             "agentResponse": response.choices[0].message.content
                               }]
                             }

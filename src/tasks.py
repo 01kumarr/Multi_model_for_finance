@@ -5,7 +5,7 @@ from crewai import Task
 financial_data_extractor_task = Task(
     description="""Here is the bank statement data of the loan applicant: {pdf_data}
 
-    Using the bank statement data extract the following critical financial data points:
+    Using the bank statement data extract the name, account number of the applicant and the following critical financial data points:
     1. Total Monthly Debt Payments
     2. Gross Monthly Income
     3. Sum of Daily Balances
@@ -16,14 +16,14 @@ financial_data_extractor_task = Task(
     8. Total Debits
     These data points must be structured and presented in a format suitable for subsequent financial ratio calculations.""",
     expected_output="""A structured dataset including:
-    - Total Monthly Debt Payments: [Value] (Note: If you are not able to find any debt data then consider it as 0)
-    - Gross Monthly Income: [Value]
-    - Sum of Daily Balances: [Value]
-    - Number of Days: [Value]
-    - Lowest Monthly Income: [Value]
-    - Highest Monthly Income: [Value]
-    - Total Credits: [Value]
-    - Total Debits: [Value]
+    - Total Monthly Debt Payments (Note: If you are not able to find any debt data then consider it as 0)
+    - Gross Monthly Income
+    - Sum of Daily Balances
+    - Number of Days
+    - Lowest Monthly Income
+    - Highest Monthly Income
+    - Total Credits
+    - Total Debits
     """,
     agent=financial_data_extractor
 )
@@ -105,22 +105,22 @@ balance_sheet_data_extractor_task = Task(
     16. Total Outstanding Shares
     Structure the extracted data in a format suitable for subsequent analysis.""",
     expected_output="""A structured dataset including:
-    - Current Assets: [Value]
-    - Current Liabilities: [Value]
-    - Total Liabilities: [Value]
-    - Shareholders' Equity: [Value]
-    - Net Income: [Value]
-    - Revenue: [Value]
-    - Total Assets: [Value]
-    - Fixed Assets: [Value]
-    - EBIT: [Value]
-    - Total Debt Service: [Value]
-    - Cost of Goods Sold (COGS): [Value]
+    - Current Assets
+    - Current Liabilities
+    - Total Liabilities
+    - Shareholders' Equity
+    - Net Income
+    - Revenue
+    - Total Assets
+    - Fixed Assets
+    - EBIT
+    - Total Debt Service
+    - Cost of Goods Sold (COGS)
     - Average Inventory: [Value]
-    - Cash and Cash Equivalents: [Value]
-    - Marketable Securities: [Value]
-    - Current Liabilities: [Value]
-    - Total Outstanding Shares: [Value]
+    - Cash and Cash Equivalents
+    - Marketable Securities
+    - Current Liabilities
+    - Total Outstanding Shares
     """,
     agent=balance_sheet_data_extractor
 )
