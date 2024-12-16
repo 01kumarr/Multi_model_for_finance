@@ -1,14 +1,11 @@
-from fastapi import FastAPI, UploadFile, Form, BackgroundTasks
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 import uvicorn
+from fastapi import FastAPI, UploadFile, Form
+from fastapi.middleware.cors import CORSMiddleware
 import os
-import uuid
 from langsmith import traceable
 from dotenv import load_dotenv
 from src.crew import *
 from src.vinit import *
-from typing import Dict
 
 # Load environment variables
 load_dotenv()
@@ -32,123 +29,82 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+origins = [
+    "https://www.agent.greenridertech.co.in",
+    "*",
+]
+
+# @app.get("/")
+# async def root():
+#     return {"message": "Hello World"}
+
+# @app.post('/upload-pdf')
+# async def upload_files(
+#     pdf_file: UploadFile = None
+#     ):
+#     if pdf_file is not None:
+#         pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
+#         with open(pdf_path, "wb") as f:
+#             f.write(await pdf_file.read())
+#             val= get_processing_time(pdf_path)
+#         return val
+
 # Directory to save uploaded files
 UPLOAD_DIRECTORY = "uploaded_files"
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
-# Simulated database for tracking tasks
-tasks: Dict[str, Dict] = {}
-
-@traceable
+@traceable  # Enable LangSmith tracing for this function
 def traced_fin_crew(pdf_path: str, text: str):
+    """
+    Wrapper for fin_crew function to enable LangSmith tracing.
+    """
     return fin_crew(pdf_path, text)
 
-@traceable
+@traceable  # Enable LangSmith tracing for this function
 def traced_default_chat_vinit(text: str):
+    """
+    Wrapper for default_chat_vinit function to enable LangSmith tracing.
+    """
     return default_chat_vinit(text)
 
-@traceable
+@traceable  # Enable LangSmith tracing for this function
 def traced_fin_org_crew(pdf_path: str, text: str):
+    """
+    Wrapper for fin_org_crew function to enable LangSmith tracing.
+    """
     return fin_org_crew(pdf_path, text)
 
-def process_pdf_task(task_id: str, pdf_path: str, text: str):
-    """
-    Process PDF and update task status.
-    """
-    try:
-        # Call the traced_fin_crew function to process the PDF
-        result = traced_fin_crew(pdf_path, text)
-        tasks[task_id]["status"] = "completed"
-        tasks[task_id]["result"] = result
-    except Exception as e:
-        # Handle any errors during processing
-        tasks[task_id]["status"] = "failed"
-        tasks[task_id]["result"] = str(e)
-
-
-
+# API 1: Accept JSON and PDF file
 @app.post("/upload")
-async def upload_files(
-    pdf_file: UploadFile = None,
-    text: str = Form(None),
-    background_tasks: BackgroundTasks = BackgroundTasks()
-):
+async def upload_files(pdf_file: UploadFile = None, text: str = Form(None)):
+    """
+    Endpoint to handle text or file uploads and process them.
+    """
     if pdf_file is not None:
-        # Save the PDF file
         pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
         with open(pdf_path, "wb") as f:
             f.write(await pdf_file.read())
-        
-        # Generate a task ID
-        task_id = str(uuid.uuid4())
-        tasks[task_id] = {"status": "processing", "result": None}
 
-        # Start processing in the background
-        background_tasks.add_task(process_pdf_task, task_id, pdf_path, text)
-
-        return JSONResponse(
-            content={
-                "message": (
-                    "Your file has been received and is being processed. "
-                    "In the meantime, feel free to ask financial-related queries."
-                ),
-                "task_id": task_id
-            },
-            status_code=202
-        )
-    elif text:
-        # Process text query immediately
-        response = traced_default_chat_vinit(text)
-        return JSONResponse(content=response)
+        # Pass file locations to the traced function
+        return traced_fin_crew(pdf_path, text)
     else:
-        return JSONResponse(content={"error": "No input provided"}, status_code=400)
-
-@app.get("/task_status/{task_id}")
-async def get_task_status(task_id: str):
-    """
-    Endpoint to check the status of a PDF processing task.
-    """
-    task = tasks.get(task_id)
-    if not task:
-        return JSONResponse(content={"error": "Task not found"}, status_code=404)
-
-    return JSONResponse(content=task)
+        return traced_default_chat_vinit(text)
 
 @app.post("/upload_org")
-async def upload_files_org(
-    pdf_file: UploadFile = None,
-    text: str = Form(None),
-    background_tasks: BackgroundTasks = BackgroundTasks()
-):
-    if pdf_file is not None:
-        # Save the PDF file
+async def upload_files_org(pdf_file: UploadFile = None, text: str = Form(None)):
+    """
+    Endpoint to handle organization-specific uploads.
+    """
+    if pdf_file is not None and text:
         pdf_path = os.path.join(UPLOAD_DIRECTORY, pdf_file.filename)
         with open(pdf_path, "wb") as f:
             f.write(await pdf_file.read())
-        
-        # Generate a task ID
-        task_id = str(uuid.uuid4())
-        tasks[task_id] = {"status": "processing", "result": None}
 
-        # Start processing in the background
-        background_tasks.add_task(process_pdf_task, task_id, pdf_path, text)
-
-        return JSONResponse(
-            content={
-                "message": (
-                    "Your file has been received and is being processed. "
-                    "In the meantime, feel free to ask financial-related queries."
-                ),
-                "task_id": task_id
-            },
-            status_code=202
-        )
-    elif text:
-        # Process text query immediately
-        response = traced_default_chat_vinit(text)
-        return JSONResponse(content=response)
+        # Pass file locations to the traced function
+        return traced_fin_org_crew(pdf_path, text)
     else:
-        return JSONResponse(content={"error": "No input provided"}, status_code=400)
+        return traced_default_chat_vinit(text)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

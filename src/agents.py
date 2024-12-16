@@ -1,11 +1,5 @@
 from crewai import Agent
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-
-os.getenv("OPENAI_API_KEY")
-os.getenv("MODEL")
 
 
 # Define your agents with roles and goals
